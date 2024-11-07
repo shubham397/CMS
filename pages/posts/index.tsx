@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { FaTrash } from 'react-icons/fa';  // Import delete icon
 import React from 'react';
 
 export default function Posts() {
@@ -11,6 +12,18 @@ export default function Posts() {
       .then((data) => setPosts(data));
   }, []);
 
+  const handleDelete = async (postId) => {
+    // Optional: confirm delete action
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      // Call API to delete the post
+      await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      // Update the state to remove the deleted post
+      setPosts(posts.filter((post) => post.id !== postId));
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Posts</h1>
@@ -19,11 +32,14 @@ export default function Posts() {
       </Link>
       <h1>List of Posts</h1>
       <ul style={styles.postsList}>
-        {posts.map((post,index) => (
+        {posts.map((post, index) => (
           <li key={post.id} style={styles.postItem}>
             <Link href={`/posts/${post.id}`} style={styles.postLink}>
-              {index+1}. {post.title}
+              {index + 1}. {post.title}
             </Link>
+            <button onClick={() => handleDelete(post.id)} style={styles.deleteButton}>
+              <FaTrash style={styles.deleteIcon} />  {/* Delete icon */}
+            </button>
           </li>
         ))}
       </ul>
@@ -55,14 +71,13 @@ const styles = {
     fontSize: '1rem',
     transition: 'background-color 0.3s ease',
   },
-  createButtonHover: {
-    backgroundColor: '#357ABD',
-  },
   postsList: {
     listStyleType: 'none',
     padding: 0,
   },
   postItem: {
+    display: 'flex',
+    alignItems: 'center',
     marginBottom: '15px',
   },
   postLink: {
@@ -70,8 +85,17 @@ const styles = {
     fontSize: '1.2rem',
     color: '#333',
     transition: 'color 0.3s ease',
+    marginRight: '10px',
   },
-  postLinkHover: {
-    color: '#4A90E2',
+  deleteButton: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: '#FF0000',
+    fontSize: '1rem',
+    transition: 'color 0.3s ease',
+  },
+  deleteIcon: {
+    fontSize: '1.2rem',
   },
 };
