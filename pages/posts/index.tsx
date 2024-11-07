@@ -76,7 +76,6 @@ const styles = {
   noPostsMessage: {
     fontSize: '1.2rem',
     color: '#999',
-    textAlign: 'center',
     marginTop: '20px',
   },
   postsList: {
